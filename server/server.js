@@ -5,10 +5,12 @@ const connectDB = require("./config/db");
 connectDB();
 
 const app = express();
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 app.use(cors());
 app.use(express.json());
 app.use("/api/application", require("./routes/applicationRoutes"));
+app.use("/api/dashboard", dashboardRoutes);
 
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/company", require("./routes/companyRoutes"));
