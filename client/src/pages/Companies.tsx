@@ -14,6 +14,9 @@ interface Company {
 
 export default function Companies() {
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [search, setSearch] = useState("");
+  const [branchFilter, setBranchFilter] = useState("All");
+  const [sortOrder, setSortOrder] = useState("");
 
   useEffect(() => {
     fetchCompanies();
@@ -59,11 +62,61 @@ export default function Companies() {
     }
   };
 
+  const filteredCompanies = companies
+    .filter((company) =>
+      company.companyName.toLowerCase().includes(search.toLowerCase())
+    )
+    .filter((company) =>
+      branchFilter === "All"
+        ? true
+        : company.eligibleBranches.includes(branchFilter)
+    )
+    .sort((a, b) => {
+      if (sortOrder === "high") return b.package - a.package;
+      if (sortOrder === "low") return a.package - b.package;
+      return 0;
+    });
+
   return (
     <div style={{ padding: "20px" }}>
       <h1 style={{ textAlign: "center" }}>Companies</h1>
 
-      {companies.map((company) => (
+      <div
+        style={{
+          display: "flex",
+          gap: "15px",
+          justifyContent: "center",
+          marginBottom: "20px",
+          flexWrap: "wrap",
+        }}
+      >
+        <input
+          placeholder="Search Company"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        <select
+          value={branchFilter}
+          onChange={(e) => setBranchFilter(e.target.value)}
+        >
+          <option>All</option>
+          <option>CSE</option>
+          <option>IT</option>
+          <option>ECE</option>
+        </select>
+
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+        >
+          <option value="">Sort</option>
+          <option value="high">Highest Package</option>
+          <option value="low">Lowest Package</option>
+        </select>
+      </div>
+
+      {filteredCompanies.map((company) => (
         <div
           key={company._id}
           style={{
