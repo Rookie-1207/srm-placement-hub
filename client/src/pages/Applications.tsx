@@ -38,6 +38,22 @@ export default function Applications() {
     }
   };
 
+  const updateStatus = async (id: string, status: string) => {
+    try {
+      await API.patch(
+        `/application/${id}`,
+        { status },
+        {
+          headers: getAuthHeader(),
+        }
+      );
+
+      fetchApplications();
+    } catch (error) {
+      console.error("Update status error:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 p-8">
       <h1 className="text-4xl font-bold text-center mb-8">
@@ -56,7 +72,36 @@ export default function Applications() {
           <p>Role: {app.company?.role || "N/A"}</p>
           <p>Package: {app.company?.package ?? "N/A"} LPA</p>
           <p>Location: {app.company?.location || "N/A"}</p>
-          <p>Status: {app.status}</p>
+
+          <p
+            className={`font-semibold mt-2 ${
+              app.status === "Selected"
+                ? "text-green-600"
+                : app.status === "Rejected"
+                ? "text-red-600"
+                : "text-yellow-600"
+            }`}
+          >
+            Status: {app.status}
+          </p>
+
+          {app.company && (
+            <div className="flex gap-2 justify-center mt-4">
+              <button
+                onClick={() => updateStatus(app._id, "Selected")}
+                className="bg-green-500 text-white px-3 py-1 rounded"
+              >
+                Select
+              </button>
+
+              <button
+                onClick={() => updateStatus(app._id, "Rejected")}
+                className="bg-red-500 text-white px-3 py-1 rounded"
+              >
+                Reject
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </div>
