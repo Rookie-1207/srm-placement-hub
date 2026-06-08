@@ -11,7 +11,7 @@ interface Company {
 interface Application {
   _id: string;
   status: string;
-  company: Company;
+  company: Company | null;
 }
 
 export default function Applications() {
@@ -23,10 +23,7 @@ export default function Applications() {
 
   const getAuthHeader = () => {
     const token = localStorage.getItem("token");
-
-    return {
-      Authorization: `Bearer ${token}`,
-    };
+    return { Authorization: `Bearer ${token}` };
   };
 
   const fetchApplications = async () => {
@@ -42,38 +39,24 @@ export default function Applications() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1 style={{ textAlign: "center" }}>My Applications</h1>
+    <div className="min-h-screen bg-slate-100 p-8">
+      <h1 className="text-4xl font-bold text-center mb-8">
+        My Applications
+      </h1>
 
       {applications.map((app) => (
         <div
           key={app._id}
-          style={{
-            border: "1px solid #ccc",
-            borderRadius: "10px",
-            padding: "20px",
-            margin: "20px auto",
-            width: "80%",
-            textAlign: "center",
-          }}
+          className="bg-white border border-slate-200 rounded-xl p-6 mb-4 shadow-md max-w-3xl mx-auto text-center"
         >
-          <h2>{app.company.companyName}</h2>
+          <h2 className="text-2xl font-bold">
+            {app.company?.companyName || "Company Deleted"}
+          </h2>
 
-          <p>
-            <strong>Role:</strong> {app.company.role}
-          </p>
-
-          <p>
-            <strong>Package:</strong> {app.company.package} LPA
-          </p>
-
-          <p>
-            <strong>Location:</strong> {app.company.location}
-          </p>
-
-          <p>
-            <strong>Status:</strong> {app.status}
-          </p>
+          <p>Role: {app.company?.role || "N/A"}</p>
+          <p>Package: {app.company?.package ?? "N/A"} LPA</p>
+          <p>Location: {app.company?.location || "N/A"}</p>
+          <p>Status: {app.status}</p>
         </div>
       ))}
     </div>
